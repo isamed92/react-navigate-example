@@ -1,4 +1,4 @@
-import React from 'react';
+import { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { getHeroesByName } from '../../helpers/getHeroesByName';
@@ -6,11 +6,9 @@ import { useForm } from '../../hooks/useForm';
 import { HeroCard } from '../hero/HeroCard';
 
 export const SearchScreen = () => {
-
-    const navigate = useNavigate()
-    const location = useLocation()
-    const { q = '' } = queryString.parse(location.search)
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { q = '' } = queryString.parse(location.search);
 
   const [formValues, handleInputChange] = useForm({
     search: q,
@@ -18,13 +16,13 @@ export const SearchScreen = () => {
 
   const { search } = formValues;
 
-  const heroesFiltered = getHeroesByName(q)
+  const heroesFiltered = useMemo(() => getHeroesByName(q), [q])
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate(`?q=${search}`)
+    navigate(`?q=${search}`);
   };
-
+  
 
   return (
     <>
@@ -51,11 +49,18 @@ export const SearchScreen = () => {
           </form>
         </div>
         <div className='col-7'>
-            <h4>Resultados</h4>
-            <hr/>
-            {
-                heroesFiltered.map(hero => <HeroCard key={hero.id} {...hero} />)
-            }
+          <h4>Resultados</h4>
+          <hr />
+          {q === '' ? (
+            <div className='alert alert-info'>Buscar un heroe</div>
+          ) : (
+            heroesFiltered.length === 0 && (
+              <div className='alert alert-danger'> No hay Resultados </div>
+            )
+          )}
+          {heroesFiltered.map((hero) => (
+            <HeroCard key={hero.id} {...hero} />
+          ))}
         </div>
       </div>
     </>
