@@ -17,10 +17,12 @@ export const LoginScreen = () => {
             }
         }
 
+        const lastPath = localStorage.getItem('lastPath') || '/marvel'
+
         dispatch(action)
 
 
-        navigate('/', {
+        navigate(lastPath, {
             replace: true
         });
     }
